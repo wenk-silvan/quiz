@@ -1,6 +1,7 @@
-import 'package:first_app/answer.dart';
-import 'package:first_app/question.dart';
 import 'package:flutter/material.dart';
+
+import './quiz.dart';
+import 'result.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,27 +13,44 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final questions = const [
+  final _questions = const [
     {
       'question': 'What\'s your favorite color?',
-      'answers': ['Black', 'Red', 'Violet', 'Yellow']
+      'answers': [
+        {'text': 'Black', 'score': 10},
+        {'text': 'Red', 'score': 30},
+        {'text': 'Yellow', 'score': 50},
+      ]
     },
     {
       'question': 'What\'s you favorite animal?',
-      'answers': ['Dog', 'Cat', 'Snake', 'Elephant']
+      'answers': [
+        {'text': 'Dog', 'score': 10},
+        {'text': 'Cat', 'score': 20},
+        {'text': 'Snake', 'score': 30},
+        {'text': 'Elephant', 'score': 50}
+      ]
     },
     {
       'question': 'What\'s your favorite hobby?',
-      'answers': ['Ski', 'Jump', 'Run', 'Play']
+      'answers': [
+        {'text': 'Ski', 'score': 50},
+        {'text': 'Jump', 'score': 30},
+        {'text': 'Run', 'score': 20},
+        {'text': 'Play', 'score': 10}
+      ]
     }
   ];
 
   var _questionIndex = 0;
+  var _totalScore = 0;
 
-  void _answerQuestion() {
+  void _answerQuestion(int score) {
     setState(() {
       _questionIndex++;
     });
+
+    _totalScore += score;
 
     print(_questionIndex);
   }
@@ -44,15 +62,13 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: Text('My First App'),
         ),
-        body: this._questionIndex < this.questions.length ? Column(
-          children: <Widget>[
-            Question(questions[_questionIndex]['question']),
-            ...(questions[_questionIndex]['answers'] as List<String>)
-                .map((answer) {
-                  return Answer(_answerQuestion, answer);
-            }).toList(),
-          ],
-        ) : Center(child: Text('You did it.')),
+        body: this._questionIndex < this._questions.length
+            ? Quiz(
+                answerQuestion: this._answerQuestion,
+                questionIndex: this._questionIndex,
+                questions: this._questions,
+              )
+            : Result(this._totalScore),
       ),
     );
   }
